@@ -1,7 +1,7 @@
 import zipfile
 import luigi
 import requests
-import tqdm
+from tqdm import tqdm
 
 
 class Download2013Data(luigi.Task):
