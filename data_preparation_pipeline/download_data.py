@@ -9,7 +9,7 @@ class Download2013Data(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(
-            '../dados/zipped_data/microdados_aneb_prova_brasil_2013.zip',
+            './dados/zipped_data/microdados_aneb_prova_brasil_2013.zip',
             format=luigi.format.Nop
             )
 
@@ -35,13 +35,13 @@ class ExtractSchoolData(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(
-            '../dados/2013/TS_ESCOLA.csv',
+            './dados/2013/TS_ESCOLA.csv',
             format=luigi.format.Nop
             )
 
     def run(self):
         zipped_file = zipfile.ZipFile(
-            '../dados/zipped_data/microdados_aneb_prova_brasil_2013.zip'
+            './dados/zipped_data/microdados_aneb_prova_brasil_2013.zip'
             )
         data = zipped_file.read('DADOS/TS_ESCOLA.csv')
         with self.output().open('wb') as school_data:

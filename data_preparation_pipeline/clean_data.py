@@ -11,7 +11,7 @@ class DropLowAttendanceSchools(luigi.Task):
 
 	def output(self):
 		return luigi.LocalTarget(
-				'../dados/2013/TS_ESCOLA_with_acceptable_attendance.csv',
+				'./dados/2013/TS_ESCOLA_with_acceptable_attendance.csv',
 				format=luigi.format.Nop
 				)
 
@@ -30,7 +30,7 @@ class ImputeMissingData(luigi.Task):
 
 	def output(self):
 		return luigi.LocalTarget(
-				'../dados/2013/TS_ESCOLA_with_imputed_values.csv',
+				'./dados/2013/TS_ESCOLA_with_imputed_values.csv',
 				format=luigi.format.Nop
 				)
 
