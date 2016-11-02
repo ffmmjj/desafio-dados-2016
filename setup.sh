@@ -1,3 +1,3 @@
 #!/bin/sh
 
-PYTHONPATH='.' luigi --module prepare_data ExtractSchoolData --local-scheduler
+PYTHONPATH='./data_preparation_pipeline' luigi --module clean_data ImputeMissingData --local-scheduler
