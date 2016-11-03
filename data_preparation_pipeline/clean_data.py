@@ -1,6 +1,7 @@
 import luigi
 import pandas as pd
 from download_data import ExtractSchoolData
+from src.carregamento.mapeamentos import dicionario_questoes_nomes_escola 
 
 
 class DropLowAttendanceSchools(luigi.Task):
@@ -42,3 +43,20 @@ class ImputeMissingData(luigi.Task):
 			imputed_values[col] = escolas_2013_pd[col].value_counts().index[0]
 
 		escolas_2013_pd.fillna(value=imputed_values).to_csv(self.output().path, index=False)
+
+
+class RenameQuestionFeatures(luigi.Task):
+	imputed_values_task = ImputeMissingData()
+
+	def requires(self):
+		return self.imputed_values_task
+
+	def output(self):
+		return luigi.LocalTarget(
+				'./dados/2013/TS_ESCOLA_with_renamed_features.csv',
+				format=luigi.format.Nop
+				)
+
+	def run(self):
+		escolas_2013_pd = pd.read_csv(self.imputed_values_task.output().path)
+		escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(self.output().path, index=False)
