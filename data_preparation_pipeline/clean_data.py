@@ -60,8 +60,3 @@ class RenameQuestionFeatures(luigi.Task):
 	def run(self):
 		escolas_2013_pd = pd.read_csv(self.imputed_values_task.output().path)
 		escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(self.output().path, index=False)
-
-
-class DataSinkTask(luigi.Task):
-	def requires(self):
-		return (RenameQuestionFeatures(), ExtractDataset('TS_PROFESSOR.csv'))
