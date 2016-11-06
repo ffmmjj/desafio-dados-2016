@@ -29,13 +29,15 @@ class Download2013Data(luigi.Task):
                     pbar.update(read_block_size)
 
 
-class ExtractSchoolData(luigi.Task):
+class ExtractDataset(luigi.Task):
+    dataset_name = luigi.Parameter()
+
     def requires(self):
         return Download2013Data()
 
     def output(self):
         return luigi.LocalTarget(
-            './dados/2013/TS_ESCOLA.csv',
+            './dados/2013/{}'.format(self.dataset_name),
             format=luigi.format.Nop
             )
 
@@ -43,6 +45,6 @@ class ExtractSchoolData(luigi.Task):
         zipped_file = zipfile.ZipFile(
             './dados/zipped_data/microdados_aneb_prova_brasil_2013.zip'
             )
-        data = zipped_file.read('DADOS/TS_ESCOLA.csv')
-        with self.output().open('wb') as school_data:
-            school_data.write(data)
+        data = zipped_file.read('DADOS/{}'.format(self.dataset_name))
+        with self.output().open('wb') as dataset:
+            dataset.write(data)

@@ -1,11 +1,11 @@
 import luigi
 import pandas as pd
-from download_data import ExtractSchoolData
+from download_data import ExtractDataset
 from src.carregamento.mapeamentos import dicionario_questoes_nomes_escola 
 
 
 class DropLowAttendanceSchools(luigi.Task):
-	extract_schools_task = ExtractSchoolData()
+	extract_schools_task = ExtractDataset('TS_ESCOLA.csv')
 
 	def requires(self):
 		return self.extract_schools_task
@@ -60,3 +60,8 @@ class RenameQuestionFeatures(luigi.Task):
 	def run(self):
 		escolas_2013_pd = pd.read_csv(self.imputed_values_task.output().path)
 		escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(self.output().path, index=False)
+
+
+class DataSinkTask(luigi.Task):
+	def requires(self):
+		return (RenameQuestionFeatures(), ExtractDataset('TS_PROFESSOR.csv'))
