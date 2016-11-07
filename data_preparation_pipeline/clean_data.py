@@ -1,4 +1,5 @@
 import luigi
+import luigi.mock
 import pandas as pd
 from download_data import ExtractDataset
 from src.carregamento.mapeamentos import dicionario_questoes_nomes_escola 
@@ -11,16 +12,17 @@ class DropLowAttendanceSchools(luigi.Task):
 		return self.extract_schools_task
 
 	def output(self):
-		return luigi.LocalTarget(
-				'./dados/2013/TS_ESCOLA_with_acceptable_attendance.csv',
-				format=luigi.format.Nop
+		return luigi.mock.MockTarget(
+				'./dados/2013/TS_ESCOLA_with_acceptable_attendance.csv'
 				)
 
 	def run(self):
 		escolas_2013_pd = pd.read_csv(self.extract_schools_task.output().path)
 		escolas_2013_pd = escolas_2013_pd[escolas_2013_pd.TAXA_PARTICIPACAO_9EF > 0.5]
+		print(self.output().__dict__)
 
-		escolas_2013_pd.to_csv(self.output().path, index=False)
+		with self.output().open('w') as fp:
+			escolas_2013_pd.to_csv(fp, index=False)
 
 
 class ImputeMissingData(luigi.Task):
@@ -30,20 +32,21 @@ class ImputeMissingData(luigi.Task):
 		return self.drop_low_attendance_schools_task
 
 	def output(self):
-		return luigi.LocalTarget(
-				'./dados/2013/TS_ESCOLA_with_imputed_values.csv',
-				format=luigi.format.Nop
+		return luigi.mock.MockTarget(
+				'./dados/2013/TS_ESCOLA_with_imputed_values.csv'
 				)
 
 	def run(self):
-		escolas_2013_pd = pd.read_csv(self.drop_low_attendance_schools_task.output().path)
+		with self.drop_low_attendance_schools_task.output().open('r') as fp:
+			escolas_2013_pd = pd.read_csv(fp)
 
 		imputed_values = {}
 		for col in escolas_2013_pd.filter(regex='TX_RESP_Q.*').columns:
 			imputed_values[col] = escolas_2013_pd[col].value_counts().index[0]
 		imputed_values['NIVEL_SOCIO_ECONOMICO'] = escolas_2013_pd.NIVEL_SOCIO_ECONOMICO.value_counts().index[0]
 
-		escolas_2013_pd.fillna(value=imputed_values).to_csv(self.output().path, index=False)
+		with self.output().open('w') as fp:
+			escolas_2013_pd.fillna(value=imputed_values).to_csv(fp, index=False)
 
 
 class RenameQuestionFeatures(luigi.Task):
@@ -53,11 +56,13 @@ class RenameQuestionFeatures(luigi.Task):
 		return self.imputed_values_task
 
 	def output(self):
-		return luigi.LocalTarget(
-				'./dados/2013/TS_ESCOLA_with_renamed_features.csv',
-				format=luigi.format.Nop
+		return luigi.mock.MockTarget(
+				'./dados/2013/TS_ESCOLA_with_renamed_features.csv'
 				)
 
 	def run(self):
-		escolas_2013_pd = pd.read_csv(self.imputed_values_task.output().path)
-		escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(self.output().path, index=False)
+		with self.imputed_values_task.output().open('r') as fp:
+			escolas_2013_pd = pd.read_csv(fp)
+
+		with self.output().open('w') as fp:
+			escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(fp, index=False)

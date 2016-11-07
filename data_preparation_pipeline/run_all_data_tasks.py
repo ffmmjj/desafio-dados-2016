@@ -1,7 +1,7 @@
 import luigi
 from download_data import ExtractDataset
-from preprocess_data import EncodeSchoolQuestions, ScaleFeatureValues
+from preprocess_data import PersistModuleData
 
 class AllDataTasks(luigi.Task):
 	def requires(self):
-		return (ScaleFeatureValues(), ExtractDataset('TS_PROFESSOR.csv'))
+		return (PersistModuleData(), ExtractDataset('TS_PROFESSOR.csv'))
