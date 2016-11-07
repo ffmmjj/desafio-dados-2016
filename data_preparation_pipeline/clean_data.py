@@ -41,6 +41,7 @@ class ImputeMissingData(luigi.Task):
 		imputed_values = {}
 		for col in escolas_2013_pd.filter(regex='TX_RESP_Q.*').columns:
 			imputed_values[col] = escolas_2013_pd[col].value_counts().index[0]
+		imputed_values['NIVEL_SOCIO_ECONOMICO'] = escolas_2013_pd.NIVEL_SOCIO_ECONOMICO.value_counts().index[0]
 
 		escolas_2013_pd.fillna(value=imputed_values).to_csv(self.output().path, index=False)
 

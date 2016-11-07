@@ -22,6 +22,7 @@ class EncodeSchoolQuestions(luigi.Task):
 
 		for col in escolas_2013_pd.filter(regex='Q_.*'):
 			escolas_2013_pd[col].replace(to_replace=self.mappings, inplace=True)
+		escolas_2013_pd.NIVEL_SOCIO_ECONOMICO.replace(to_replace={'Grupo {}'.format(i+1): i+1 for i in range(8)}, inplace=True)
 
 		escolas_2013_pd.to_csv(self.output().path, index=False)
 
