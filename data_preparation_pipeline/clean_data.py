@@ -1,8 +1,8 @@
 import luigi
 import luigi.mock
 import pandas as pd
+import numpy as np
 from download_data import ExtractDataset
-from src.carregamento.mapeamentos import dicionario_questoes_nomes_escola 
 
 
 class DropLowAttendanceSchools(luigi.Task):
@@ -26,43 +26,37 @@ class DropLowAttendanceSchools(luigi.Task):
 
 
 class ImputeMissingData(luigi.Task):
-	drop_low_attendance_schools_task = DropLowAttendanceSchools()
-
-	def requires(self):
-		return self.drop_low_attendance_schools_task
-
 	def output(self):
 		return luigi.mock.MockTarget(
 				'./dados/2013/TS_ESCOLA_with_imputed_values.csv'
 				)
 
 	def run(self):
-		with self.drop_low_attendance_schools_task.output().open('r') as fp:
+		with self.input_task.output().open('r') as fp:
 			escolas_2013_pd = pd.read_csv(fp)
 
 		imputed_values = {}
-		for col in escolas_2013_pd.filter(regex='TX_RESP_Q.*').columns:
+		for col in self.processed_columns_names(escolas_2013_pd):
 			imputed_values[col] = escolas_2013_pd[col].value_counts().index[0]
-		imputed_values['NIVEL_SOCIO_ECONOMICO'] = escolas_2013_pd.NIVEL_SOCIO_ECONOMICO.value_counts().index[0]
 
 		with self.output().open('w') as fp:
 			escolas_2013_pd.fillna(value=imputed_values).to_csv(fp, index=False)
 
-
-class RenameQuestionFeatures(luigi.Task):
-	imputed_values_task = ImputeMissingData()
+class ImputeSchoolsMissingData(ImputeMissingData):
+	input_task = DropLowAttendanceSchools()
 
 	def requires(self):
-		return self.imputed_values_task
+		return self.input_task
 
-	def output(self):
-		return luigi.mock.MockTarget(
-				'./dados/2013/TS_ESCOLA_with_renamed_features.csv'
-				)
+	def processed_columns_names(self, df):
+		return np.append(df.filter(regex='TX_RESP_Q.*').columns.values, ['NIVEL_SOCIO_ECONOMICO'])
 
-	def run(self):
-		with self.imputed_values_task.output().open('r') as fp:
-			escolas_2013_pd = pd.read_csv(fp)
 
-		with self.output().open('w') as fp:
-			escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(fp, index=False)
+class ImputeTeacherMissingData(ImputeMissingData):
+	input_task = ExtractDataset('TS_PROFESSOR.csv')
+
+	def requires(self):
+		return self.input_task
+
+	def processed_columns_names(self, df):
+		return df.filter(regex='TX_RESP_Q.*').columns.values

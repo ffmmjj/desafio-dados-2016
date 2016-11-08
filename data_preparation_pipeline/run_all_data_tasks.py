@@ -1,7 +1,7 @@
 import luigi
 from download_data import ExtractDataset
-from preprocess_data import PersistModuleData
+from preprocess_data import PersistModuleSchoolData, PersistModuleTeacherData
 
 class AllDataTasks(luigi.Task):
 	def requires(self):
-		return (PersistModuleData(), ExtractDataset('TS_PROFESSOR.csv'))
+		return (PersistModuleSchoolData(), PersistModuleTeacherData())
