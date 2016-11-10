@@ -1,2 +1,0 @@
-from src.preprocessamento.imputacao import escolas_nse_baixo, escolas_nse_medio, escolas_nse_alto
-from src.preprocessamento.imputacao import escolas_2013_codificada_pd as todas_escolas_pd

@@ -3,8 +3,9 @@ import luigi.mock
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+
 from clean_data import ImputeSchoolsMissingData, ImputeTeacherMissingData
-from src.carregamento.mapeamentos import dicionario_questoes_nomes_escola
+from mapeamentos import dicionario_questoes_nomes_escola
 
 
 class EncodeSchoolQuestions(luigi.Task):
@@ -15,9 +16,7 @@ class EncodeSchoolQuestions(luigi.Task):
 		return self.input_task
 
 	def output(self):
-		return luigi.mock.MockTarget(
-				'./dados/2013/TS_ESCOLA_with_encoded_values.csv'
-				)
+		return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_encoded_values.csv')
 
 	def run(self):
 		with self.input_task.output().open('r') as fp:
@@ -30,6 +29,7 @@ class EncodeSchoolQuestions(luigi.Task):
 		with self.output().open('w') as fp:
 			escolas_2013_pd.to_csv(fp, index=False)
 
+
 class EncodeTeacherQuestions(luigi.Task):
 	input_task = ImputeTeacherMissingData()
 	mappings = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10}
@@ -38,9 +38,7 @@ class EncodeTeacherQuestions(luigi.Task):
 		return self.input_task
 
 	def output(self):
-		return luigi.mock.MockTarget(
-				'./dados/2013/TS_PROFESSOR_with_encoded_values.csv'
-				)
+		return luigi.mock.MockTarget('./dados/2013/TS_PROFESSOR_with_encoded_values.csv')
 
 	def run(self):
 		with self.input_task.output().open('r') as fp:
@@ -54,11 +52,6 @@ class EncodeTeacherQuestions(luigi.Task):
 
 
 class ScaleFeatureValues(luigi.Task):
-	def output(self):
-		return luigi.mock.MockTarget(
-				'./dados/2013/TS_ESCOLA_with_scaled_values.csv'
-				)
-
 	def run(self):
 		with self.input_task.output().open('r') as fp:
 			dataset_pd = pd.read_csv(fp)
@@ -76,6 +69,9 @@ class ScaleSchoolFeatureValues(ScaleFeatureValues):
 	def requires(self):
 		return self.input_task
 
+	def output(self):
+		return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_scaled_values.csv')
+
 	def get_columns_names(self, df):
 		return np.append(df.filter(regex='TX_RESP_.*').columns.values, ['NIVEL_SOCIO_ECONOMICO'])
 
@@ -85,6 +81,9 @@ class ScaleTeacherFeatureValues(ScaleFeatureValues):
 
 	def requires(self):
 		return self.input_task
+
+	def output(self):
+		return luigi.mock.MockTarget('./dados/2013/TS_PROFESSOR_with_scaled_values.csv')
 
 	def get_columns_names(self, df):
 		return df.filter(regex='TX_RESP_.*').columns.values
@@ -97,9 +96,7 @@ class RenameSchoolQuestionFeatures(luigi.Task):
 		return self.imputed_values_task
 
 	def output(self):
-		return luigi.mock.MockTarget(
-				'./dados/2013/TS_ESCOLA_with_renamed_features.csv'
-				)
+		return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_renamed_features.csv')
 
 	def run(self):
 		with self.imputed_values_task.output().open('r') as fp:
@@ -116,9 +113,7 @@ class PersistModuleSchoolData(luigi.Task):
 		return self.input_task
 
 	def output(self):
-		return luigi.LocalTarget(
-				'./dados/2013/TS_ESCOLA_preprocessed.csv'
-				)
+		return luigi.LocalTarget('./dados/2013/TS_ESCOLA_preprocessed.csv')
 
 	def run(self):
 		with self.input_task.output().open('r') as fp:
@@ -126,6 +121,7 @@ class PersistModuleSchoolData(luigi.Task):
 
 		with self.output().open('w') as fp:
 			escolas_2013_pd.to_csv(fp, index=False)
+
 
 class PersistModuleTeacherData(luigi.Task):
 	input_task = ScaleTeacherFeatureValues()
@@ -134,9 +130,7 @@ class PersistModuleTeacherData(luigi.Task):
 		return self.input_task
 
 	def output(self):
-		return luigi.LocalTarget(
-				'./dados/2013/TS_PROFESSOR_preprocessed.csv'
-				)
+		return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_preprocessed.csv')
 
 	def run(self):
 		with self.input_task.output().open('r') as fp:
@@ -144,4 +138,3 @@ class PersistModuleTeacherData(luigi.Task):
 
 		with self.output().open('w') as fp:
 			escolas_2013_pd.to_csv(fp, index=False)
-
