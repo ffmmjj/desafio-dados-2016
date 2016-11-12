@@ -1,7 +1,6 @@
 import luigi
 
-from partition_data import SplitTeachersData, SplitSchoolData
-from preprocess_data import PersistModuleSchoolData, PersistModuleTeacherData
+from split_data import SplitTeachersData, SplitSchoolData
 
 
 class AllDataTasks(luigi.Task):
