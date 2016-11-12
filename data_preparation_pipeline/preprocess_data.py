@@ -16,7 +16,7 @@ class EncodeSchoolQuestions(luigi.Task):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_encoded_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_encoded_values.csv')
 
     def run(self):
         with self.input_task.output().open('r') as fp:
@@ -39,7 +39,7 @@ class EncodeTeacherQuestions(luigi.Task):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_PROFESSOR_with_encoded_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_with_encoded_values.csv')
 
     def run(self):
         with self.input_task.output().open('r') as fp:
