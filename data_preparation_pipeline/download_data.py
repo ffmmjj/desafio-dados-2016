@@ -5,8 +5,6 @@ from tqdm import tqdm
 
 
 class Download2013Data(luigi.Task):
-    owner_email = 'ffmmjj@gmail.com'
-
     def output(self):
         return luigi.LocalTarget(
             './dados/zipped_data/microdados_aneb_prova_brasil_2013.zip',
