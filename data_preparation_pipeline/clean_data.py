@@ -12,7 +12,7 @@ class DropLowAttendanceSchools(luigi.Task):
         return self.extract_schools_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_acceptable_attendance.csv')
+        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_acceptable_attendance.csv')
 
     def run(self):
         with self.extract_schools_task.output().open('r') as fp:
@@ -43,7 +43,7 @@ class ImputeSchoolsMissingData(ImputeMissingData):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_imputed_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_imputed_values.csv')
 
     def processed_columns_names(self, df):
         return np.append(df.filter(regex='TX_RESP_Q.*').columns.values, ['NIVEL_SOCIO_ECONOMICO'])
@@ -56,7 +56,7 @@ class ImputeTeacherMissingData(ImputeMissingData):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_PROFESSOR_with_imputed_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_with_imputed_values.csv')
 
     def processed_columns_names(self, df):
         return df.filter(regex='TX_RESP_Q.*').columns.values

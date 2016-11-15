@@ -71,7 +71,7 @@ class ScaleSchoolFeatureValues(ScaleFeatureValues):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_scaled_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_scaled_values.csv')
 
     def get_columns_names(self, df):
         return np.append(df.filter(regex='TX_RESP_.*').columns.values, ['NIVEL_SOCIO_ECONOMICO'])
@@ -84,7 +84,7 @@ class ScaleTeacherFeatureValues(ScaleFeatureValues):
         return self.input_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_PROFESSOR_with_scaled_values.csv')
+        return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_with_scaled_values.csv')
 
     def get_columns_names(self, df):
         return df.filter(regex='TX_RESP_.*').columns.values
@@ -97,7 +97,7 @@ class RenameSchoolQuestionFeatures(luigi.Task):
         return self.imputed_values_task
 
     def output(self):
-        return luigi.mock.MockTarget('./dados/2013/TS_ESCOLA_with_renamed_features.csv')
+        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_renamed_features.csv')
 
     def run(self):
         with self.imputed_values_task.output().open('r') as fp:
