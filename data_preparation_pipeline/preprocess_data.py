@@ -90,25 +90,8 @@ class ScaleTeacherFeatureValues(ScaleFeatureValues):
         return df.filter(regex='TX_RESP_.*').columns.values
 
 
-class RenameSchoolQuestionFeatures(luigi.Task):
-    imputed_values_task = ScaleSchoolFeatureValues()
-
-    def requires(self):
-        return self.imputed_values_task
-
-    def output(self):
-        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_with_renamed_features.csv')
-
-    def run(self):
-        with self.imputed_values_task.output().open('r') as fp:
-            escolas_2013_pd = pd.read_csv(fp)
-
-        with self.output().open('w') as fp:
-            escolas_2013_pd.rename(columns=dicionario_questoes_nomes_escola).to_csv(fp, index=False)
-
-
 class PersistModuleSchoolData(luigi.Task):
-    input_task = RenameSchoolQuestionFeatures()
+    input_task = ScaleSchoolFeatureValues()
 
     def requires(self):
         return self.input_task
