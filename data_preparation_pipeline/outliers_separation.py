@@ -1,10 +1,11 @@
 import luigi
 import pandas as pd
-from preprocess_data import PersistModuleSchoolData
+
+from augment_data import AppendTeacherAttendanceFeature
 
 
 class SplitSchoolOutliersData(luigi.Task):
-    input_task = PersistModuleSchoolData()
+    input_task = AppendTeacherAttendanceFeature()
 
     def requires(self):
         return self.input_task

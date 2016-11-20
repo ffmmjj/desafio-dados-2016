@@ -60,3 +60,4 @@ class SplitTeachersData(SplitData):
     def output(self):
         return {'exploration':luigi.LocalTarget('./dados/2013/TS_PROFESSOR_exploration_data.csv'),
                 'validation': luigi.LocalTarget('./dados/2013/TS_PROFESSOR_validation_data.csv')}
+

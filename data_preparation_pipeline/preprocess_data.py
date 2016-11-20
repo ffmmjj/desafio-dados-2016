@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 
-from clean_data import ImputeSchoolsMissingData, ImputeTeacherMissingData
+from clean_data import ImputeSchoolsMissingData, ImputeTeacherMissingData, ImputeDirectorMissingData
 from mapeamentos import dicionario_questoes_nomes_escola
 
 
@@ -52,6 +52,27 @@ class EncodeTeacherQuestions(luigi.Task):
             professores_2013_pd.to_csv(fp, index=False)
 
 
+class EncodeDirectorQuestions(luigi.Task):
+    input_task = ImputeDirectorMissingData()
+    mappings = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10}
+
+    def requires(self):
+        return self.input_task
+
+    def output(self):
+        return luigi.LocalTarget('./dados/2013/TS_DIRETOR_with_encoded_values.csv')
+
+    def run(self):
+        with self.input_task.output().open('r') as fp:
+            diretores_2013_pd = pd.read_csv(fp)
+
+        for col in diretores_2013_pd.filter(regex='TX_RESP_.*'):
+            diretores_2013_pd[col].replace(to_replace=self.mappings, inplace=True)
+
+        with self.output().open('w') as fp:
+            diretores_2013_pd.to_csv(fp, index=False)
+
+
 class ScaleFeatureValues(luigi.Task):
     def run(self):
         with self.input_task.output().open('r') as fp:
@@ -85,6 +106,19 @@ class ScaleTeacherFeatureValues(ScaleFeatureValues):
 
     def output(self):
         return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_with_scaled_values.csv')
+
+    def get_columns_names(self, df):
+        return df.filter(regex='TX_RESP_.*').columns.values
+
+
+class ScaleDirectorFeatureValues(ScaleFeatureValues):
+    input_task = EncodeTeacherQuestions()
+
+    def requires(self):
+        return self.input_task
+
+    def output(self):
+        return luigi.LocalTarget('./dados/2013/TS_DIRETOR_with_scaled_values.csv')
 
     def get_columns_names(self, df):
         return df.filter(regex='TX_RESP_.*').columns.values

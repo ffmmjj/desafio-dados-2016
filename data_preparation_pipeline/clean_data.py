@@ -60,3 +60,16 @@ class ImputeTeacherMissingData(ImputeMissingData):
 
     def processed_columns_names(self, df):
         return df.filter(regex='TX_RESP_Q.*').columns.values
+
+
+class ImputeDirectorMissingData(ImputeMissingData):
+    input_task = ExtractDataset('TS_DIRETOR.csv')
+
+    def requires(self):
+        return self.input_task
+
+    def output(self):
+        return luigi.LocalTarget('./dados/2013/TS_DIRETOR_with_imputed_values.csv')
+
+    def processed_columns_names(self, df):
+        return df.filter(regex='TX_RESP_Q.*').columns.values
