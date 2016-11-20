@@ -1,0 +1,198 @@
+
+
+					Correlation Coefficients, using the observations 2 - 22664
+					(missing values were skipped)
+
+					    MEDIA_5EF_LP    MEDIA_5EF_MT    MEDIA_9EF_LP    MEDIA_9EF_MT
+					          1.0000          0.9549          0.6740          0.7009 MEDIA_5EF_LP
+					                          1.0000          0.6687          0.7120 MEDIA_5EF_MT
+					                                          1.0000          0.9093 MEDIA_9EF_LP
+					                                                          1.0000 MEDIA_9EF_MT
+
+Os pares (Media 9ef LP, Media 9ef MT) e (Media 5ef LP, Media 5ef MT) tem alta correlação entre si, então eles poderiam ser reduzidos para usar apenas uma media por serie: por exemplo, usar apenas as medias de matematica do quinto e nono ano como proxy para a media em lingua portuguesa.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+As seguintes features de escola foram selecionadas como opções de mais baixo custo:
+38, 68, 69, 72 e 74 (ver dicionario de dados para a interpretacao delas). A feature 13(qualidade das salas de aula) foi incluída para se comparar o efeito de uma característica que faz sentido em relação às demais.
+A matriz de correlação abaixo indica que os pares (68, 72) e (69, 74) possuem alta correlação, o que faz sentido quando se interpreta 
+seus significados. Dessa forma, serão mantidas apenas as features 72 e 74 entre esses dois pares:
+
+Correlation Coefficients, using the observations 1 - 22664
+5% critical value (two-tailed) = 0.0130 for n = 22664
+
+    TX_RESP_Q013    TX_RESP_Q038    TX_RESP_Q068    TX_RESP_Q069
+          1.0000          0.1863          0.0955          0.0835 TX_RESP_Q013
+                          1.0000          0.1952          0.1609 TX_RESP_Q038
+                                          1.0000          0.5867 TX_RESP_Q068
+                                                          1.0000 TX_RESP_Q069
+
+    TX_RESP_Q072    TX_RESP_Q074
+          0.1120          0.0957 TX_RESP_Q013
+          0.2263          0.1797 TX_RESP_Q038
+          0.7112          0.4434 TX_RESP_Q068
+          0.4998          0.6792 TX_RESP_Q069
+          1.0000          0.5884 TX_RESP_Q072
+                          1.0000 TX_RESP_Q074
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Os seguintes modelos de regressão linear para o quinto e nono ano foram obtidso usando as features destacadas acima, incluindo-se o nivel socio-economico para que se isole o efeito desse fator:
+
+Model 5: OLS, using observations 1-22664 (n = 11002)
+Missing or incomplete observations dropped: 11662
+Dependent variable: MEDIA_5EF_MT
+
+                      coefficient  std. error  t-ratio  p-value 
+  --------------------------------------------------------------
+  const               203.057       0.206469   983.5    0.0000   ***
+  NIVEL_SOCIO_ECON~    15.6694      0.221246    70.82   0.0000   ***
+  TX_RESP_Q013          0.980970    0.208485     4.705  2.57e-06 ***
+  TX_RESP_Q038          2.09218     0.215319     9.717  3.14e-22 ***
+  TX_RESP_Q072          1.88275     0.260700     7.222  5.47e-13 ***
+  TX_RESP_Q074          1.08130     0.258006     4.191  2.80e-05 ***
+
+Mean dependent var   202.8035   S.D. dependent var   27.53321
+Sum squared resid     5146912   S.E. of regression   21.63496
+R-squared            0.382836   Adjusted R-squared   0.382555
+F(5, 10996)          1364.194   P-value(F)           0.000000
+Log-likelihood      −49431.72   Akaike criterion     98875.45
+Schwarz criterion    98919.28   Hannan-Quinn         98890.21
+
+Model 4: OLS, using observations 1-22664
+Dependent variable: MEDIA_9EF_MT
+
+                      coefficient  std. error  t-ratio   p-value 
+  ---------------------------------------------------------------
+  const               240.880       0.111391   2162      0.0000   ***
+  NIVEL_SOCIO_ECON~     9.37069     0.120782     77.58   0.0000   ***
+  TX_RESP_Q013          0.886184    0.113425      7.813  5.83e-15 ***
+  TX_RESP_Q038          1.04348     0.119114      8.760  2.08e-18 ***
+  TX_RESP_Q072          1.41339     0.142137      9.944  2.99e-23 ***
+  TX_RESP_Q074          0.813108    0.138744      5.861  4.68e-09 ***
+
+Mean dependent var   240.5535   S.D. dependent var   19.68812
+Sum squared resid     6364466   S.E. of regression   16.75985
+R-squared            0.275504   Adjusted R-squared   0.275344
+F(5, 22658)          1723.232   P-value(F)           0.000000
+Log-likelihood      −96045.33   Akaike criterion     192102.7
+Schwarz criterion    192150.8   Hannan-Quinn         192118.3
+
+
+Todos os fatores são estatisticamente significativos pelo critério de baixo p-value. Os três fatores com maior impacto(dado que todos eles estão na mesma escala) são, nessa ordem:
+ * fator 38: Internet para os alunos;
+ * fator 72: Alunos podem levar livros da biblioteca para casa;
+*  fator 74: Membros da comunidade podem levar livros da biblioteca para casa.
+
+Pode-se observar então que fatores que envolvem pouco custo, como acesso à internet pelos alunos e acesso livre aos livros da escola parecem ter um impacto maior do que a qualidade das salas de aula, controlando-se os efeitos de nível-socio-economico da escola.
+Essas features, após a normalização, assumiram valores em torno de intervalos com tamnho 3, logo pode-se esperar um ganho de até 9 pontos na média 
+ao se trabalhar nessas áreas.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Foi incluída no dataset de escolas a questão 73 do dataset de diretores. 
+Essa questão pergunta aos diretores se eles consideram que a falta de assiduidade dos professores representa um problema para a escola. Isso está sendo usado
+como um proxy para saber quais escolas têm problemas com esse aspecto. Os seguintes modelos de regressão foram obtidos para o quinto e nono ano:
+
+Model 5: OLS, using observations 1-22664 (n = 11023)
+Missing or incomplete observations dropped: 11641
+Dependent variable: MEDIA_5EF_MT
+
+                      coefficient  std. error  t-ratio   p-value 
+  ---------------------------------------------------------------
+  const               203.036       0.206130   985.0     0.0000   ***
+  NIVEL_SOCIO_ECON~    15.8510      0.221658    71.51    0.0000   ***
+  TX_RESP_Q013          0.844203    0.207018     4.078   4.58e-05 ***
+  TX_RESP_Q038          2.17454     0.214881    10.12    5.75e-24 ***
+  TX_RESP_Q072          1.75822     0.259743     6.769   1.36e-11 ***
+  TX_RESP_Q074          1.15943     0.256154     4.526   6.07e-06 ***
+  TX_RESP_TEACHERS~     0.119050    0.199331     0.5972  0.5504  
+
+Mean dependent var   202.8774   S.D. dependent var   27.53112
+Sum squared resid     5128991   S.E. of regression   21.57764
+R-squared            0.386063   Adjusted R-squared   0.385729
+F(6, 11016)          1154.535   P-value(F)           0.000000
+Log-likelihood      −49496.34   Akaike criterion     99006.68
+Schwarz criterion    99057.84   Hannan-Quinn         99023.91
+
+Excluding the constant, p-value was highest for variable 129 (TX_RESP_TEACHERS_ATTENDANCE)
+
+Model 4: OLS, using observations 1-22664
+Dependent variable: MEDIA_9EF_MT
+
+                      coefficient  std. error  t-ratio   p-value 
+  ---------------------------------------------------------------
+  const               241.005       0.111370   2164      0.0000   ***
+  NIVEL_SOCIO_ECON~     9.45935     0.120341     78.60   0.0000   ***
+  TX_RESP_TEACHERS~     0.137153    0.109596      1.251  0.2108  
+  TX_RESP_Q013          0.794120    0.113385      7.004  2.56e-12 ***
+  TX_RESP_Q038          1.06999     0.119303      8.969  3.23e-19 ***
+  TX_RESP_Q072          1.16767     0.142002      8.223  2.09e-16 ***
+  TX_RESP_Q074          0.995360    0.139504      7.135  9.97e-13 ***
+
+Mean dependent var   240.6247   S.D. dependent var   19.68700
+Sum squared resid     6350945   S.E. of regression   16.74241
+R-squared            0.276961   Adjusted R-squared   0.276769
+F(6, 22657)          1446.464   P-value(F)           0.000000
+Log-likelihood      −96021.23   Akaike criterion     192056.5
+Schwarz criterion    192112.7   Hannan-Quinn         192074.7
+
+Excluding the constant, p-value was highest for variable 129 (TX_RESP_TEACHERS_ATTENDANCE)
+
+Pode-se ver que, isolando-se os fatores anteriores, a informação sobre a falta de assiduidade dos professores não representa um fator estatisticamente
+significativo para a média da escola na prova brasil. Esse comportamento foi observado em ambas as disciplinas e em ambas as séries.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Foram incluídas no dataset de escolas informações coletadas do dataset de professores.
+As questões 8, 11, 12, 14, 57, 65, 103 e 106 do dataset de professores foram agregadas por escola usando a mediana.
+Os seguintes modelos de regressão linear foram obtidos para o quinto e nono ano:
+
+Model 3: OLS, using observations 1-22664 (n = 11023)
+Missing or incomplete observations dropped: 11641
+Dependent variable: MEDIA_5EF_MT
+
+                      coefficient  std. error  t-ratio    p-value 
+  ----------------------------------------------------------------
+  const               202.201       0.205937   981.9     0.0000    ***
+  TX_RESP_Q008_PRO~     2.00553     0.235671     8.510   1.97e-17  ***
+  TX_RESP_Q011_PRO~     0.182130    0.228445     0.7973  0.4253   
+  TX_RESP_Q012_PRO~    −2.36491     0.282311    −8.377   6.09e-17  ***
+  TX_RESP_Q014_PRO~     1.59300     0.259375     6.142   8.45e-10  ***
+  TX_RESP_Q057_PRO~     1.14748     0.289884     3.958   7.59e-05  ***
+  TX_RESP_Q065_PRO~     2.92684     0.254525    11.50    1.99e-30  ***
+  TX_RESP_Q103         −2.71544     0.297778    −9.119   8.90e-20  ***
+  TX_RESP_Q106          6.38198     0.272116    23.45    9.71e-119 ***
+  NIVEL_SOCIO_ECON~    15.9616      0.222336    71.79    0.0000    ***
+
+Mean dependent var   202.8774   S.D. dependent var   27.53112
+Sum squared resid     4748522   S.E. of regression   20.76474
+R-squared            0.431605   Adjusted R-squared   0.431140
+F(9, 11013)          929.1782   P-value(F)           0.000000
+Log-likelihood      −49071.54   Akaike criterion     98163.08
+Schwarz criterion    98236.16   Hannan-Quinn         98187.70
+
+Excluding the constant, p-value was highest for variable 131 (TX_RESP_Q011_PROFESSOR)
+
+
+Model 2: OLS, using observations 1-22664
+Dependent variable: MEDIA_9EF_MT
+
+                      coefficient  std. error  t-ratio    p-value 
+  ----------------------------------------------------------------
+  const               240.722       0.111836   2152      0.0000    ***
+  TX_RESP_Q008_PRO~     1.08326     0.131749      8.222  2.10e-16  ***
+  TX_RESP_Q011_PRO~    −0.203795    0.126247     −1.614  0.1065   
+  TX_RESP_Q012_PRO~    −1.02050     0.151874     −6.719  1.87e-11  ***
+  TX_RESP_Q014_PRO~     1.80014     0.141157     12.75   4.04e-37  ***
+  TX_RESP_Q057_PRO~     0.560675    0.156300      3.587  0.0003    ***
+  TX_RESP_Q065_PRO~     1.96770     0.137901     14.27   5.41e-46  ***
+  TX_RESP_Q103         −2.05956     0.158976    −12.96   3.00e-38  ***
+  TX_RESP_Q106          4.20543     0.142492     29.51   6.91e-188 ***
+  NIVEL_SOCIO_ECON~     9.65821     0.119604     80.75   0.0000    ***
+
+Mean dependent var   240.6349   S.D. dependent var   19.69919
+Sum squared resid     5976223   S.E. of regression   16.24205
+R-squared            0.320464   Adjusted R-squared   0.320194
+F(9, 22654)          1187.050   P-value(F)           0.000000
+Log-likelihood      −95332.07   Akaike criterion     190684.1
+Schwarz criterion    190764.4   Hannan-Quinn         190710.3
+
+Excluding the constant, p-value was highest for variable 131 (TX_RESP_Q011_PROFESSOR)
+
+Pode-se notar que a questão 11 não possui significância estatística(essa questão diz respeito à titulação do professor).
+Todas as outras apresentaram baixos p-values, sendo as questões 106, 103, 65 as de maior impacto.
+Há algumas diferenças no impacto de cada característica quando se compara o quinto e nono ano. No nono ano, os fatores de titulação e salário bruto apresentam
+menos impacto do que no quinto ano, enquanto que para o nono ano professores que estão há mais tempo lecionando naquela escola apresenta um impacto maior.
