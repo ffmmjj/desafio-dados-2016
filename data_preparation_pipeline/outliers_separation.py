@@ -1,11 +1,11 @@
 import luigi
 import pandas as pd
 
-from augment_data import AppendTeacherAttendanceFeature
+from augment_data import AppendFeaturesAggregatedFromTeachersDatasetToSchool
 
 
 class SplitSchoolOutliersData(luigi.Task):
-    input_task = AppendTeacherAttendanceFeature()
+    input_task = AppendFeaturesAggregatedFromTeachersDatasetToSchool()
 
     def requires(self):
         return self.input_task
