@@ -47,18 +47,3 @@ class SplitOutstandingSchoolData(SplitData):
     def output(self):
         return {'exploration': luigi.LocalTarget('./dados/2013/TS_ESCOLA_outstanding_exploration_data.csv'),
                 'validation': luigi.LocalTarget('./dados/2013/TS_ESCOLA_outstanding_validation_data.csv')}
-
-
-class SplitTeachersData(SplitData):
-    input_task = ScaleTeacherFeatureValues()
-
-    def get_input_file(self):
-        return self.input_task.output()
-
-    def requires(self):
-        return self.input_task
-
-    def output(self):
-        return {'exploration':luigi.LocalTarget('./dados/2013/TS_PROFESSOR_exploration_data.csv'),
-                'validation': luigi.LocalTarget('./dados/2013/TS_PROFESSOR_validation_data.csv')}
-
