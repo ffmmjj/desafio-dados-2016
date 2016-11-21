@@ -1,11 +1,13 @@
 import luigi
-import pandas as pd
 import numpy as np
-from preprocess_data import PersistModuleSchoolData, ScaleDirectorFeatureValues, PersistModuleTeacherData
+import pandas as pd
+
+from preprocess_data import ScaleDirectorFeatureValues, ScaleTeacherFeatureValues, \
+    ScaleSchoolFeatureValues
 
 
 class AppendTeacherAttendanceFeatureToSchool(luigi.Task):
-    input_tasks = (PersistModuleSchoolData(), ScaleDirectorFeatureValues())
+    input_tasks = (ScaleSchoolFeatureValues(), ScaleDirectorFeatureValues())
 
     def requires(self):
         return self.input_tasks
@@ -28,7 +30,7 @@ class AppendTeacherAttendanceFeatureToSchool(luigi.Task):
 
 
 class AppendFeaturesAggregatedFromTeachersDatasetToSchool(luigi.Task):
-    input_tasks = (AppendTeacherAttendanceFeatureToSchool(), PersistModuleTeacherData())
+    input_tasks = (AppendTeacherAttendanceFeatureToSchool(), ScaleTeacherFeatureValues())
 
     def requires(self):
         return self.input_tasks

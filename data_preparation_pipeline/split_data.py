@@ -1,8 +1,9 @@
 import luigi
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from preprocess_data import PersistModuleTeacherData
+
 from outliers_separation import SplitSchoolOutliersData
+from preprocess_data import ScaleTeacherFeatureValues
 
 
 class SplitData(luigi.Task):
@@ -49,7 +50,7 @@ class SplitOutstandingSchoolData(SplitData):
 
 
 class SplitTeachersData(SplitData):
-    input_task = PersistModuleTeacherData()
+    input_task = ScaleTeacherFeatureValues()
 
     def get_input_file(self):
         return self.input_task.output()

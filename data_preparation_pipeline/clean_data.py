@@ -1,7 +1,8 @@
 import luigi
 import luigi.mock
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from download_data import ExtractDataset
 
 

@@ -5,7 +5,6 @@ import pandas as pd
 from sklearn import preprocessing
 
 from clean_data import ImputeSchoolsMissingData, ImputeTeacherMissingData, ImputeDirectorMissingData
-from mapeamentos import dicionario_questoes_nomes_escola
 
 
 class EncodeSchoolQuestions(luigi.Task):
@@ -122,37 +121,3 @@ class ScaleDirectorFeatureValues(ScaleFeatureValues):
 
     def get_columns_names(self, df):
         return df.filter(regex='TX_RESP_.*').columns.values
-
-
-class PersistModuleSchoolData(luigi.Task):
-    input_task = ScaleSchoolFeatureValues()
-
-    def requires(self):
-        return self.input_task
-
-    def output(self):
-        return luigi.LocalTarget('./dados/2013/TS_ESCOLA_preprocessed.csv')
-
-    def run(self):
-        with self.input_task.output().open('r') as fp:
-            escolas_2013_pd = pd.read_csv(fp)
-
-        with self.output().open('w') as fp:
-            escolas_2013_pd.to_csv(fp, index=False)
-
-
-class PersistModuleTeacherData(luigi.Task):
-    input_task = ScaleTeacherFeatureValues()
-
-    def requires(self):
-        return self.input_task
-
-    def output(self):
-        return luigi.LocalTarget('./dados/2013/TS_PROFESSOR_preprocessed.csv')
-
-    def run(self):
-        with self.input_task.output().open('r') as fp:
-            escolas_2013_pd = pd.read_csv(fp)
-
-        with self.output().open('w') as fp:
-            escolas_2013_pd.to_csv(fp, index=False)
