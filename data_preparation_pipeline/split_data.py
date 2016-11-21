@@ -3,14 +3,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from outliers_separation import SplitSchoolOutliersData
-from preprocess_data import ScaleTeacherFeatureValues
 
 
 class SplitData(luigi.Task):
     def run(self):
         with self.get_input_file().open('r') as fp:
             dataset = pd.read_csv(fp)
-        exploration_data, validation_data = train_test_split(dataset, train_size=0.75)
+        exploration_data, validation_data = train_test_split(dataset, train_size=0.75, random_state=1234)
         exploration_df = pd.DataFrame(data=exploration_data, columns=dataset.columns)
         validation_df = pd.DataFrame(data=validation_data, columns=dataset.columns)
 
