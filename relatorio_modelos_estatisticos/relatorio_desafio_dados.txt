@@ -205,4 +205,6 @@ Todas as outras apresentaram baixos p-values, sendo as questões 106, 103, 65 as
 
 Há algumas diferenças no impacto de cada característica quando se compara o quinto e nono ano. No nono ano, os fatores de titulação e salário bruto apresentam
 menos impacto do que no quinto ano, enquanto que para o nono ano a presença de professores que estão há mais tempo lecionando naquela escola apresenta um impacto maior.
-Pode-se notar também que, no quinto ano, a realização de projetos interdisciplinares(Questão 57) apresenta impacto comparativamente maior do que no nono ano.
+Pode-se notar também que, em relação às outras características avaliadas, a presença de projetos interdisciplinares não possui impacto significativo na média da escola.
+Em relação ao impacto negativo atribuído à característica do salário bruto (questão 12), uma hipótese é de que o efeito do salário está sendo capturado pelo 
+nível socio-econômico, que precisa ser compensado por uma contribuição negativa do salário.
